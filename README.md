@@ -1,2 +1,2 @@
 # HashJoinImplementation
-This repository was created due to implement to hash join algorithm.
+This repository was created due to implement the hash join algorithm.
