@@ -1,3 +1,4 @@
 # Ignora cache do python
 *.pyc
 __pychache__/
+*.txt

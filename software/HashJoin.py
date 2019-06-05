@@ -2,26 +2,44 @@ class HashJoin:
   bucketDict1 = dict()
   bucketDict2 = dict()
   def __init__(self,table1,index1,table2,index2):
-    self.table1 = table1
-    self.table2 = table2
+    self.table1 = open(table1,'r')
+    self.table2 = open(table2,'r')
     self.index1 = index1
     self.index2 = index2
 
-  def hashFunc(self,key):
-    return ((23*key+20)%10)%97
-    
-  def loadBuckets(self):
-    for i in self.table1:
-      id = hashFunc(self.table1[index1])
-      if id not in bucketDict1:
-        bucketDict1[id] = []
-      else:
-        bucketDict1[id].append(i)
+  def _hash(self,index):
+    try:
+      index = int(index)
+      print(type(index))
+      return hash(index)
+    except:
+      print(type(index))
+      return hash(index)
 
-    for j in self.table2:
-      id = hashFunc(self.table2[index2])
-      if id not in bucketDict2:
-        bucketDict2[id] = []
+  def loadBuckets(self):
+    linhas = self.table1.readlines()
+    for linha in linhas:
+      vetorLinha = linha.split(",")
+      id = self._hash(vetorLinha[self.index1])
+      if id not in self.bucketDict1:
+        self.bucketDict1[id] = []
+        self.bucketDict1[id].append(linha)
       else:
-        bucketDict2[id].append(i)
+        self.bucketDict1[id].append(linha)
+
+    linhas = self.table2.readlines()
+    for linha in linhas:
+      vetorLinha = linha.split(",")
+      id = self._hash(vetorLinha[self.index2])
+      if id not in self.bucketDict2:
+        self.bucketDict2[id] = []
+        self.bucketDict2[id].append(linha)
+      else:
+        self.bucketDict2[id].append(linha)
+
+    print(self.bucketDict1,"\n\n\n",self.bucketDict2)
+
+if __name__ == "__main__":
+    h = HashJoin("nation.txt",0,"nation.txt",0)
+    h.loadBuckets()
 

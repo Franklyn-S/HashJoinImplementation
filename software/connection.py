@@ -1,18 +1,15 @@
 import pyodbc
-server_name =  "LAPTOP-3HO5A040\\SQLEXPRESS" #Insira o seu servido aqui
+server_name =  "LAPTOP-3HO5A040\\SQLEXPRESS"
 db_name = "tpc-h"
-
-username = 'sa' #Insira o seu usuário
-password = '@SQLserver123' #Insira a sua senha
-
 cnxn = pyodbc.connect('Driver={SQL Server};'
                       'Server='+server_name+';'
                       'Database='+db_name+';'
-                      'UID='+username+';'
-					  'PWD='+ password+';'
+                      'UID=;'
+                      'PWD=;'
                       'Trusted_Connection=yes;')
 cursor = cnxn.cursor()
-cursor.execute("SELECT * from dbo.nation")	
+query = "SELECT * from %s" %("nation")
+cursor.execute(query)
 
 arq = open('nation.txt', 'w')
 tupla = cursor.description
