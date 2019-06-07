@@ -38,4 +38,4 @@ class Load:
 
 if __name__ == "__main__":
 	loader = Load("LAPTOP-3HO5A040\\SQLEXPRESS","tpc-h",'','')
-	print(loader.load("nation"))
+	print(loader.load("part"))

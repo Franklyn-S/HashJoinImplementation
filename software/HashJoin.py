@@ -1,45 +1,66 @@
+import os 
+
 class HashJoin:
-  bucketDict1 = dict()
-  bucketDict2 = dict()
+
   def __init__(self,table1,index1,table2,index2):
-    self.table1 = open(table1,'r')
+    self.table1 = open(table1,'r') 
     self.table2 = open(table2,'r')
     self.index1 = index1
     self.index2 = index2
+    self._bucket1 = 'bucket%s1' %(table1[:-4].upper())
+    self._bucket2 = 'bucket%s2' %(table2[:-4].upper())
+    self.flag = False
+    try:
+      os.mkdir(self._bucket1)
+      os.mkdir(self._bucket2)
+      self.flag = True
+    except:
+      pass
 
   def _hash(self,index):
     try:
       index = int(index)
-      print(type(index))
       return hash(index)
     except:
-      print(type(index))
       return hash(index)
 
-  def loadBuckets(self):
-    linhas = self.table1.readlines()
+  #O _loadBucket itera por cada tupla da tabela dada aplica a 
+  #função hash e adiciona a tupla na página com o id igual ao da função hash
+  def _loadBucket(self,table,index,bucket):
+    linhas = table.readlines()
+    if not self.flag:
+      return "Error: Cannot loadBuckets"
     for linha in linhas:
       vetorLinha = linha.split(",")
-      id = self._hash(vetorLinha[self.index1])
-      if id not in self.bucketDict1:
-        self.bucketDict1[id] = []
-        self.bucketDict1[id].append(linha)
-      else:
-        self.bucketDict1[id].append(linha)
+      id = self._hash(vetorLinha[index])
+      try:
+        bucketfile = open("%s/%s.txt" %(bucket,id),"r")
+      except:
+        bucketfile = open("%s/%s.txt" %(bucket,id),"w")
+        bucketfile.close()
 
-    linhas = self.table2.readlines()
-    for linha in linhas:
-      vetorLinha = linha.split(",")
-      id = self._hash(vetorLinha[self.index2])
-      if id not in self.bucketDict2:
-        self.bucketDict2[id] = []
-        self.bucketDict2[id].append(linha)
-      else:
-        self.bucketDict2[id].append(linha)
+        bucketfile = open("%s/%s.txt" %(bucket,id),"r")
+      finally:
+        content = bucketfile.readlines()
 
-    print(self.bucketDict1,"\n\n\n",self.bucketDict2)
+        content.append(linha)
+        bucketfile = open("%s/%s.txt" %(bucket,id),"w")
+        for line in content:
+          bucketfile.write(line)
+        bucketfile.close()
+
+  def hashjoin(self):
+    self._loadBucket(self.table1,self.index1,self._bucket1)
+    self._loadBucket(self.table2,self.index2,self._bucket2)
+        
+
 
 if __name__ == "__main__":
+    import time
+    
     h = HashJoin("nation.txt",0,"nation.txt",0)
-    h.loadBuckets()
+    begin = time.time()
+    print(h.hashjoin())
+    end = time.time()
+    print("Exeecution time:",(end-begin))
 
