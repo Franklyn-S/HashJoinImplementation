@@ -1,4 +1,6 @@
 import pyodbc
+import time
+
 class Load:
 	def __init__(self, server,db,user,passw,):
 		self.server = server
@@ -20,22 +22,39 @@ class Load:
 		filename = '%s.txt' %table
 		file = open(filename, 'w')
 		tupla = cursor.description
-		colunas = []
+
+		strColunas = ''
+		counter = 0 
 		for i in tupla:
-			colunas.append(i[0])
+			if counter == len(tupla) - 1:
+				strColunas += str(i[0])
+			else:
+				strColunas += str(i[0]+',')
+			counter += 1
+
+		file.write(strColunas+"\n")
+
+		string = ""
+		tuplecounter = 0 
 		for linha in cursor:
-		    string = ""
-		    for index in range(0,len(colunas)):
-		    	if index == len(colunas) - 1:
+		    for index in range(0,counter):
+		    	if index == counter - 1:
 		    		string += str(linha[index])
 		    	else:
 		        	string += str(linha[index])+","
-			
-		    file.write(string+"\n")
+		    string += '\n'
+		    if tuplecounter>100000:
+		        file.write(string)
+		        string = ''
+		    tuplecounter += 1
+		file.write(string)
 		file.close()
 		cursor.close()
 		return filename
 
 if __name__ == "__main__":
 	loader = Load("LAPTOP-3HO5A040\\SQLEXPRESS","tpc-h",'','')
+	begin = time.time()
 	print(loader.load("part"))
+	end = time.time()
+	print("Execution time:",(end-begin))
