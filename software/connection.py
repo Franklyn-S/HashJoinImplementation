@@ -1,3 +1,5 @@
+#Conexão ao TPC-H
+
 import pyodbc
 server_name =  "LAPTOP-3HO5A040\\SQLEXPRESS"
 db_name = "tpc-h"
