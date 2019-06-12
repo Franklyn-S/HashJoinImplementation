@@ -29,7 +29,7 @@ class Load:
 			if counter == len(tupla) - 1:
 				strColunas += str(i[0])
 			else:
-				strColunas += str(i[0]+',')
+				strColunas += str(i[0]+';')
 			counter += 1
 
 		file.write(strColunas+"\n")
@@ -41,7 +41,7 @@ class Load:
 		    	if index == counter - 1:
 		    		string += str(linha[index])
 		    	else:
-		        	string += str(linha[index])+","
+		        	string += str(linha[index])+";"
 		    string += '\n'
 		    if tuplecounter>100000:
 		        file.write(string)

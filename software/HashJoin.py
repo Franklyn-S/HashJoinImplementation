@@ -11,12 +11,13 @@ class HashJoin:
     #Definindo o index
     with open(table1,'r') as t1:
       linha1 = t1.readlines()
-      columns = linha1[0].strip('\n').split(',')
+      columns = linha1[0].strip('\n').split(';')
       self.index1 = columns.index(index1)
 
     with open(table2,'r') as t2:
       linha2 = t2.readlines()
-      columns = linha2[0].strip('\n').split(',')
+      columns = linha2[0].strip('\n').split(';')
+      print(columns)
       self.index2 = columns.index(index2)
     #Index estabelecido
 
@@ -48,7 +49,7 @@ class HashJoin:
           file.write(str(self.bufferTuple[key]))
       self.bufferTuple = dict()
     except:
-      raise Error("File while load the bucket to the disk")
+      raise Error("File failed while load the bucket to the disk")
 
   #O _loadBucket itera por cada tupla da tabela dada aplica a 
   #função hash e adiciona a tupla na página com o id igual ao da função hash
@@ -59,7 +60,7 @@ class HashJoin:
       if not flag:
         raise Error("Error: Buckets with this name already exists")
       for linha in linhas[1:]:
-        vetorLinha = linha.split(",")
+        vetorLinha = linha.split(";")
         id = self._hash(vetorLinha[index])
         if self.watcher < 100000:
           try:
@@ -67,8 +68,11 @@ class HashJoin:
           except:
             self.bufferTuple[id] = ''
             self.bufferTuple[id] += linha
+          finally:
+            self.watcher += 1
         else:
           self._deployDict(bucket)
+
       self._deployDict(bucket)
 
 
@@ -92,5 +96,5 @@ if __name__ == "__main__":
     begin = time.time()
     print(h.hashjoin())
     end = time.time()
-    print("Exeecution time:",(end-begin))
+    print("Execution time:",(end-begin))
 
