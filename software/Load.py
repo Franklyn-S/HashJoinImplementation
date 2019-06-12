@@ -2,7 +2,7 @@ import pyodbc
 import time
 
 class Load:
-	def __init__(self, server,db,user,passw,):
+	def __init__(self, server,db,user,passw):
 		self.server = server
 		self.db = db
 		self.user = user
