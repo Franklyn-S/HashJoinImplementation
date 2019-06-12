@@ -76,6 +76,14 @@ class HashJoin:
       self._deployDict(bucket)
 
 
+  def _deployResult(self, result):
+    try:
+      with open("Result.txt" ,"a+") as file:
+        file.write(str(result))
+    except:
+      raise Error('Failed while loading the join result to disk')
+
+
 
 
   def hashjoin(self):
@@ -85,10 +93,31 @@ class HashJoin:
     R = os.listdir(self._bucket1)
     S = os.listdir(self._bucket2)
 
-    
-        
 
+    result = ''
+    counter = 0
 
+    for ps in S:
+        with open("%s/%s.txt" % (self._bucket2,ps),"r") as bucket2:
+          lines_S = bucket2.readlines()
+          for ts in lines_S:
+            columns_S = ts.split(";")
+            joinAttr_S = columns_S[self.index2] 
+            i = _hash(joinAttr_S)
+            with open("%s/%s.txt" % (self._bucket1,i),"r") as bucket1:
+              lines_R = bucket1.readlines()
+              for tr in lines_R:
+                columns_R = tr.split(";")
+                joinAttr_R = columns_R[self.index1]
+                if(joinAttr_R == joinAttr_S):
+                  if (counter < 100000):
+                    result += tr + ';' + ts + '\n'
+                    counter += 1  
+                  else:
+                    self._deployResult(result)
+                    result = ''
+      self._deployResult(result)
+              
 if __name__ == "__main__":
     import time
     
