@@ -17,7 +17,6 @@ class HashJoin:
     with open(table2,'r') as t2:
       linha2 = t2.readlines()
       columns = linha2[0].strip('\n').split(';')
-      print(columns)
       self.index2 = columns.index(index2)
     #Index estabelecido
 
@@ -49,7 +48,7 @@ class HashJoin:
           file.write(str(self.bufferTuple[key]))
       self.bufferTuple = dict()
     except:
-      raise Error("File failed while load the bucket to the disk")
+      raise Error("File failed while loading the bucket to the disk")
 
   #O _loadBucket itera por cada tupla da tabela dada aplica a 
   #função hash e adiciona a tupla na página com o id igual ao da função hash
@@ -62,16 +61,16 @@ class HashJoin:
       for linha in linhas[1:]:
         vetorLinha = linha.split(";")
         id = self._hash(vetorLinha[index])
-        if self.watcher < 100000:
-          try:
-            self.bufferTuple[id] += linha
-          except:
-            self.bufferTuple[id] = ''
-            self.bufferTuple[id] += linha
-          finally:
-            self.watcher += 1
-        else:
+        if self.watcher > 100000:
           self._deployDict(bucket)
+          self.watcher = 0
+        try:
+          self.bufferTuple[id] += linha
+        except:
+          self.bufferTuple[id] = ''
+          self.bufferTuple[id] += linha
+        finally:
+          self.watcher += 1          
 
       self._deployDict(bucket)
 
@@ -92,36 +91,39 @@ class HashJoin:
 
     R = os.listdir(self._bucket1)
     S = os.listdir(self._bucket2)
+    print(R,"\n",S)
 
 
     result = ''
     counter = 0
 
     for ps in S:
-        with open("%s/%s.txt" % (self._bucket2,ps),"r") as bucket2:
+        with open("%s/%s" % (self._bucket2,ps),"r") as bucket2:
           lines_S = bucket2.readlines()
           for ts in lines_S:
             columns_S = ts.split(";")
             joinAttr_S = columns_S[self.index2] 
-            i = _hash(joinAttr_S)
-            with open("%s/%s.txt" % (self._bucket1,i),"r") as bucket1:
-              lines_R = bucket1.readlines()
-              for tr in lines_R:
-                columns_R = tr.split(";")
-                joinAttr_R = columns_R[self.index1]
-                if(joinAttr_R == joinAttr_S):
-                  if (counter < 100000):
-                    result += tr + ';' + ts + '\n'
-                    counter += 1  
-                  else:
-                    self._deployResult(result)
-                    result = ''
-      self._deployResult(result)
+            i = self._hash(joinAttr_S)
+            if ("%s.txt" %i) in R:
+              with open("%s/%s.txt" % (self._bucket1,i),"r") as bucket1:
+                lines_R = bucket1.readlines()
+                for tr in lines_R:
+                  columns_R = tr.split(";")
+                  joinAttr_R = columns_R[self.index1]
+                  if(joinAttr_R == joinAttr_S):
+                    if (counter < 100000):
+                      result += tr + ';' + ts + '\n'
+                      counter += 1  
+                    else:
+                      result += tr + ';' + ts + '\n'
+                      self._deployResult(result)
+                      result = ''
+    self._deployResult(result)
               
 if __name__ == "__main__":
     import time
     
-    h = HashJoin("nation.txt",'n_nationkey',"part.txt",'p_partkey')
+    h = HashJoin("part.txt",'p_partkey',"nation.txt",'n_nationkey')
     begin = time.time()
     print(h.hashjoin())
     end = time.time()
