@@ -91,9 +91,7 @@ class HashJoin:
 
     R = os.listdir(self._bucket1)
     S = os.listdir(self._bucket2)
-    print(R,"\n",S)
-
-
+    
     result = ''
     counter = 0
 
@@ -111,13 +109,14 @@ class HashJoin:
                   columns_R = tr.split(";")
                   joinAttr_R = columns_R[self.index1]
                   if(joinAttr_R == joinAttr_S):
-                    if (counter < 100000):
-                      result += tr + ';' + ts + '\n'
-                      counter += 1  
-                    else:
-                      result += tr + ';' + ts + '\n'
+                    if (counter > 100000):
                       self._deployResult(result)
                       result = ''
+                      counter = 0
+                    result += tr + ';' + ts + '\n'
+                    counter += 1  
+  
+                      
     self._deployResult(result)
               
 if __name__ == "__main__":
