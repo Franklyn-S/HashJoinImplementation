@@ -12,6 +12,8 @@ class HashJoin:
     R = (self.table1[:-4].upper())
     S = (self.table2[:-4].upper())
     self.returnName = "result%sJoin%s.txt" %(R,S)
+    with open(self.returnName,'w') as w:
+      pass
 
     #Definindo o index
     with open(table1,'r') as t1:
