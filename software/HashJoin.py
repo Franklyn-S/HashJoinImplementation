@@ -7,21 +7,28 @@ class HashJoin:
   def __init__(self,table1,index1,table2,index2):
     self.table1 = table1
     self.table2 = table2
+    self.result = ''
+
+    R = (self.table1[:-4].upper())
+    S = (self.table2[:-4].upper())
+    self.returnName = "result%sJoin%s.txt" %(R,S)
 
     #Definindo o index
     with open(table1,'r') as t1:
       linha1 = t1.readlines()
+      self.result += linha1[0].strip('\n')
       columns = linha1[0].strip('\n').split(';')
       self.index1 = columns.index(index1)
 
     with open(table2,'r') as t2:
       linha2 = t2.readlines()
+      self.result += ';'+linha2[0]
       columns = linha2[0].strip('\n').split(';')
       self.index2 = columns.index(index2)
     #Index estabelecido
 
-    self._bucket1 = 'bucket%s1' %(table1[:-4].upper())
-    self._bucket2 = 'bucket%s2' %(table2[:-4].upper())
+    self._bucket1 = 'bucket%s1' %R
+    self._bucket2 = 'bucket%s2' %S
     self.flag1 = False
     self.flag2 = False
 
@@ -33,6 +40,8 @@ class HashJoin:
     if not os.path.isdir(self._bucket2):
       os.mkdir(self._bucket2)
       self.flag2 = True
+
+
 
   def _hash(self,index):
     try:
@@ -77,7 +86,7 @@ class HashJoin:
 
   def _deployResult(self, result):
     try:
-      with open("Result.txt" ,"a+") as file:
+      with open(self.returnName ,"a+") as file:
         file.write(str(result))
     except:
       raise Error('Failed while loading the join result to disk')
@@ -91,8 +100,8 @@ class HashJoin:
 
     R = os.listdir(self._bucket1)
     S = os.listdir(self._bucket2)
-    
-    result = ''
+
+    result = self.result
     counter = 0
 
     for ps in S:
@@ -113,11 +122,10 @@ class HashJoin:
                       self._deployResult(result)
                       result = ''
                       counter = 0
-                    result += tr + ';' + ts + '\n'
-                    counter += 1  
-  
-                      
+                    result += tr.strip("\n") + ';' + ts
+                    counter += 1                        
     self._deployResult(result)
+    return self.returnName
               
 if __name__ == "__main__":
     import time
