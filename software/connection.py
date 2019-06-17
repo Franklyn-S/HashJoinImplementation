@@ -1,15 +1,16 @@
 #Conexão ao TPC-H
 
 import pyodbc
-server_name =  "LAPTOP-3HO5A040\\SQLEXPRESS"
+server_name =  "200.19.182.252"
 db_name = "tpc-h"
+user = "sa"
+password = "@SQLserver123"
 cnxn = pyodbc.connect('Driver={SQL Server};'
                       'Server='+server_name+';'
                       'Database='+db_name+';'
-                      'UID=;'
-                      'PWD=;'
+                      'UID='+user+';'
+                      'PWD=' +password+';'
                       'Trusted_Connection=yes;')
-
 
 
 cursor1 = cnxn.cursor()
