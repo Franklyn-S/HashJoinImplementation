@@ -14,11 +14,7 @@ class HashJoin:
     self.returnName = "result%sJoin%s.txt" %(R,S)
     #Header in the final result
     with open(self.returnName,'w') as w:
-      with open(self.table1,'r') as R:
-        with open(self.table2,'r') as S:
-          headerR = R.readLine
-          headerS = S.readLine
-          w.write(headerR + headerS)
+      pass
 
     #Definindo o index
     with open(table1,'r') as t1:
