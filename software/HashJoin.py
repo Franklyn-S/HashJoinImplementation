@@ -14,21 +14,19 @@ class HashJoin:
     self.returnName = "result%sJoin%s.txt" %(R,S)
     #Header in the final result
     with open(self.returnName,'w') as w:
-      with open(self.table1,'r') as R:
-        with open(self.table2,'r') as S:
-          headerR = R.readLine
-          headerS = S.readLine
-          w.write(headerR + headerS)
+      pass
 
     #Definindo o index
     with open(table1,'r') as t1:
       linha1 = t1.readlines()
+      #Pega as colunas da primeira tabela
       self.result += linha1[0].strip('\n')
       columns = linha1[0].strip('\n').split(';')
       self.index1 = columns.index(index1)
 
     with open(table2,'r') as t2:
       linha2 = t2.readlines()
+      #Concatena as colunas da primeira tabela com as da segunda tabela
       self.result += ';'+linha2[0]
       columns = linha2[0].strip('\n').split(';')
       self.index2 = columns.index(index2)
