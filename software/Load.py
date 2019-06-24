@@ -55,6 +55,6 @@ class Load:
 if __name__ == "__main__":
 	loader = Load("LAPTOP-3HO5A040\\SQLEXPRESS","tpc-h",'','')
 	begin = time.time()
-	print(loader.load("part"))
+	print(loader.load("supplier"))
 	end = time.time()
 	print("Execution time:",(end-begin))

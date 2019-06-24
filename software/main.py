@@ -1,5 +1,6 @@
 if __name__ == "__main__":
     import time
+    from HashJoin import HashJoin
     
     
     n = int(input("Digite o número de tabelas:"))
@@ -9,31 +10,30 @@ if __name__ == "__main__":
     i = 0
     
     begin = time.time()
-        
+
+    print("Insira o nome da tabela junto do atributo de junção da seguinte forma: 'tabela','atributo'")
     while i < n:
-        table = str(input('Digite as tabelas:'))
-        table_list.append(table)
+        table = str(input('Insira os dados:'))
+        table = table.split(',')
+        table_list.append((table[0]+'.txt',table[1]))
         i = i + 1
 
-    j = 0
-    
-    while j < n:
-        attribute = str(input('Digite os atributos de junção:'))
-        attribute_list.append(attribute)
-        j = j + 1
 
     if(n < 2):
         print("Não é necessária a junção!\n") 
 
     if(n == 2):
-        join = HashJoin(table_list[0],attribute_list[0],table_list[1],attribute_list[1])
+        print(table_list[0][0],table_list[0][1],table_list[1][0],table_list[1][1])
+        join = HashJoin(table_list[0][0],table_list[0][1],table_list[1][0],table_list[1][1])
         join.hashjoin()
     
     
     if(n == 3): 
-        join1 = HashJoin(table_list[0],attribute_list[0],table_list[1],attribute_list[1])
+        print(table_list[0][0],table_list[0][1],table_list[1][0],table_list[1][1])
+        join1 = HashJoin(table_list[0][0],table_list[0][1],table_list[1][0],table_list[1][1])
         join2 = join1.hashjoin()
-        join3 = HashJoin(join2,attribute_list[0],table_list[2],attribute_list[2])
+        print(join2,table_list[0][1],table_list[2][0],table_list[2][1])
+        join3 = HashJoin(join2,table_list[0][1],table_list[2][0],table_list[2][1])
         join3.hashjoin()
     
     end = time.time()
